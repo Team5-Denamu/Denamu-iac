@@ -1,16 +1,16 @@
 /*
-  Resource : Bastion 서버 ACG
-  Bastion Server 및 Main Server에 사용되는 ACG(Access Control Group)을 정의합니다.
+  Resource : Public 서버 ACG
+  Public Server 및 Private Server에 사용되는 ACG(Access Control Group)을 정의합니다.
   group_rule에는 인 바운드 및 아웃 바운드가 정의됩니다.
 */
 
-resource "ncloud_access_control_group" "bastion_acg" {
-  name   = "${var.zone_name}-${var.terraform_name}-bastion-acg"
+resource "ncloud_access_control_group" "public_acg" {
+  name   = "${var.zone_name}-${var.terraform_name}-public-acg"
   vpc_no = ncloud_vpc.main.id
 }
 
-resource "ncloud_access_control_group_rule" "bastion_acg" {
-  access_control_group_no = ncloud_access_control_group.bastion_acg.id
+resource "ncloud_access_control_group_rule" "public_acg" {
+  access_control_group_no = ncloud_access_control_group.public_acg.id
   inbound {
     protocol    = "TCP"
     ip_block    = "0.0.0.0/0"
@@ -45,13 +45,13 @@ resource "ncloud_access_control_group_rule" "bastion_acg" {
   }
 }
 
-resource "ncloud_access_control_group" "main_acg" {
-  name   = "${var.zone_name}-${var.terraform_name}-main-acg"
+resource "ncloud_access_control_group" "private_acg" {
+  name   = "${var.zone_name}-${var.terraform_name}-public-acg"
   vpc_no = ncloud_vpc.main.id
 }
 
-resource "ncloud_access_control_group_rule" "main_acg" {
-  access_control_group_no = ncloud_access_control_group.main_acg.id
+resource "ncloud_access_control_group_rule" "private_acg" {
+  access_control_group_no = ncloud_access_control_group.private_acg.id
   inbound {
     protocol    = "TCP"
     ip_block    = "0.0.0.0/0"
@@ -85,14 +85,14 @@ resource "ncloud_access_control_group_rule" "main_acg" {
   작성한 ACG를 NIC에 적용시켜 서버에 할당합니다.
 */
 
-resource "ncloud_network_interface" "bastion_nic" {
-  name = "${var.terraform_name}-bastion-nic"
+resource "ncloud_network_interface" "public_nic" {
+  name = "${var.terraform_name}-public-nic"
   subnet_no = ncloud_subnet.public.id
-  access_control_groups = [ncloud_access_control_group.bastion_acg.id]
+  access_control_groups = [ncloud_access_control_group.public_acg.id]
 }
 
-resource "ncloud_network_interface" "main_nic" {
-  name = "${var.terraform_name}-main-nic"
+resource "ncloud_network_interface" "private_nic" {
+  name = "${var.terraform_name}-private-nic"
   subnet_no = ncloud_subnet.private.id
-  access_control_groups = [ncloud_access_control_group.main_acg.id]
+  access_control_groups = [ncloud_access_control_group.private_acg.id]
 }

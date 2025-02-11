@@ -15,37 +15,37 @@ resource "local_file" "develop_pem" {
 
 /*
   Resource : Public IP
-  공인 IP를 bastion 서버에 할당합니다. 
+  공인 IP를 public 서버에 할당합니다. 
 */
 
 resource "ncloud_public_ip" "public_ip" {
-  server_instance_no = ncloud_server.bastion-server.id
+  server_instance_no = ncloud_server.public-server.id
 }
 
 /*
   Resource : Server
   생성한 vpc, subnet, login_key, nic 리소스들을 할당하여 서버를 생성합니다.
 */
-resource "ncloud_server" "bastion-server" {
+resource "ncloud_server" "public-server" {
   subnet_no                 = ncloud_subnet.public.id
-  name                      = "${var.terraform_name}-bastion-server"
+  name                      = "${var.terraform_name}-public-server"
   server_image_number       = "23214590" // ubuntu-22.04
   server_spec_code          = "c2-g3"
   login_key_name            = ncloud_login_key.loginkey.key_name
   network_interface {
-    network_interface_no = ncloud_network_interface.bastion_nic.id
+    network_interface_no = ncloud_network_interface.public_nic.id
     order                = 0
   }
 }
 
-resource "ncloud_server" "main-server" {
+resource "ncloud_server" "private-server" {
   subnet_no                 = ncloud_subnet.private.id
-  name                      = "${var.terraform_name}-main-server"
+  name                      = "${var.terraform_name}-private-server"
   server_image_number       = "23214590" // ubuntu-22.04
   server_spec_code          = "c2-g3" // High CPU & vCPU 2EA, Memory 4GB, Disk 50GB
   login_key_name            = ncloud_login_key.loginkey.key_name
   network_interface {
-        network_interface_no = ncloud_network_interface.main_nic.id
+        network_interface_no = ncloud_network_interface.private_nic.id
         order                = 0
   }
 }
