@@ -9,8 +9,8 @@ resource "ncloud_login_key" "loginkey" {
 }
 
 resource "local_file" "develop_pem" {
-  filename = "${var.terraform_name}.pem"
   content  = ncloud_login_key.loginkey.private_key
+  filename = "${var.terraform_name}.pem"
 }
 
 /*
