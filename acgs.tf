@@ -64,6 +64,18 @@ resource "ncloud_access_control_group_rule" "tf_private_acg_rule" {
     port_range  = "8080"
     description = "WAS"
   }
+  inbound {
+    protocol    = "TCP"
+    ip_block    = "0.0.0.0/0"
+    port_range  = "80"
+    description = "HTTP"
+  }
+  inbound {
+    protocol    = "TCP"
+    ip_block    = "0.0.0.0/0"
+    port_range  = "443"
+    description = "HTTPS"
+  }
   outbound {
     protocol    = "TCP"
     ip_block    = "0.0.0.0/0"
