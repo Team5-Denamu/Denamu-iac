@@ -9,8 +9,8 @@ resource "ncloud_login_key" "loginkey" {
 }
 
 resource "local_file" "develop_pem" {
-  filename = "${var.terraform_name}.pem"
   content  = ncloud_login_key.loginkey.private_key
+  filename = "${var.terraform_name}.pem"
 }
 
 /*
@@ -30,7 +30,7 @@ resource "ncloud_server" "public-server" {
   subnet_no                 = ncloud_subnet.public.id
   name                      = "${var.terraform_name}-public-server"
   server_image_number       = "23214590" // ubuntu-22.04
-  server_spec_code          = "c2-g3"
+  server_spec_code          = "c2-g3" // High CPU & vCPU 2EA, Memory 4GB, Disk 50GB
   login_key_name            = ncloud_login_key.loginkey.key_name
   network_interface {
     network_interface_no = ncloud_network_interface.public_nic.id
@@ -38,14 +38,15 @@ resource "ncloud_server" "public-server" {
   }
 }
 
-resource "ncloud_server" "private-server" {
-  subnet_no                 = ncloud_subnet.private.id
-  name                      = "${var.terraform_name}-private-server"
-  server_image_number       = "23214590" // ubuntu-22.04
-  server_spec_code          = "c2-g3" // High CPU & vCPU 2EA, Memory 4GB, Disk 50GB
-  login_key_name            = ncloud_login_key.loginkey.key_name
-  network_interface {
-        network_interface_no = ncloud_network_interface.private_nic.id
-        order                = 0
-  }
-}
+# 미사용으로 인해 제거
+# resource "ncloud_server" "private-server" {
+#   subnet_no                 = ncloud_subnet.private.id
+#   name                      = "${var.terraform_name}-private-server"
+#   server_image_number       = "23214590" // ubuntu-22.04
+#   server_spec_code          = "c2-g3" // High CPU & vCPU 2EA, Memory 4GB, Disk 50GB
+#   login_key_name            = ncloud_login_key.loginkey.key_name
+#   network_interface {
+#         network_interface_no = ncloud_network_interface.private_nic.id
+#         order                = 0
+#   }
+# }
