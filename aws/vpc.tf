@@ -56,7 +56,7 @@ resource "aws_route_table_association" "public_assoc" {
 # 보안 그룹 생성 (SSH, HTTP 허용)
 resource "aws_security_group" "instance_sg" {
   name        = "instance-sg"
-  description = "Allow SSH and HTTP"
+  description = "Allow SSH, HTTP, HTTPS"
   vpc_id      = aws_vpc.main.id
 
   ingress {
@@ -71,6 +71,14 @@ resource "aws_security_group" "instance_sg" {
     description = "HTTP"
     from_port   = 80
     to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+    ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
