@@ -56,9 +56,10 @@ resource "aws_route_table_association" "public_assoc" {
 # 보안 그룹 생성 (SSH, HTTP 허용)
 resource "aws_security_group" "instance_sg" {
   name        = "instance-sg"
-  description = "Allow SSH, HTTP, HTTPS"
+  description = "Allow SSH and HTTP"  # 원래 description 유지
   vpc_id      = aws_vpc.main.id
 
+  # SSH
   ingress {
     description = "SSH"
     from_port   = 22
@@ -67,6 +68,7 @@ resource "aws_security_group" "instance_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # HTTP
   ingress {
     description = "HTTP"
     from_port   = 80
@@ -75,7 +77,8 @@ resource "aws_security_group" "instance_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    ingress {
+  # HTTPS
+  ingress {
     description = "HTTPS"
     from_port   = 443
     to_port     = 443
@@ -83,11 +86,25 @@ resource "aws_security_group" "instance_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Grafana
+  ingress {
+    description = "Grafana"
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
+    description = "Allow all outbound"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  lifecycle {
+    ignore_changes = [description]  # description 변경 무시
   }
 
   tags = {

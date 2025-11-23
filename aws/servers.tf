@@ -40,13 +40,17 @@ data "aws_ami" "ubuntu_arm" {
 # EC2 인스턴스 생성
 resource "aws_instance" "server" {
   ami                    = data.aws_ami.ubuntu_arm.id
-  instance_type          = "t4g.medium"
+  instance_type          = "t4g.small"
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.instance_sg.id]
   key_name               = aws_key_pair.deployer.key_name
 
   tags = {
-    Name = "ubuntu-22-04-arm-t4g-medium"
+    Name = "ubuntu-22-04-arm-t4g-small"
+  }
+  
+  lifecycle {
+    ignore_changes = [ami]  # AMI 변경 무시
   }
 }
 
